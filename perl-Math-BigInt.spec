@@ -12,7 +12,7 @@ Epoch:          1
 %global cpan_version 1.999818
 # Keep 4-digit version to compete with perl.spec
 Version:        %(echo %{cpan_version} | sed 's/\(\.....\)/\1./')
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Arbitrary-size integer and float mathematics
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/Math-BigInt
@@ -21,6 +21,7 @@ BuildArch:      noarch
 BuildRequires:  make
 BuildRequires:  %{?scl_prefix}perl-generators
 BuildRequires:  %{?scl_prefix}perl-interpreter
+BuildRequires:  %{?scl_prefix}perl(Config)
 BuildRequires:  %{?scl_prefix}perl(ExtUtils::MakeMaker) >= 6.76
 BuildRequires:  %{?scl_prefix}perl(strict)
 BuildRequires:  %{?scl_prefix}perl(warnings)
@@ -35,7 +36,6 @@ BuildRequires:  %{?scl_prefix}perl(Math::Complex) >= 1.39
 BuildRequires:  %{?scl_prefix}perl(overload)
 # Tests:
 BuildRequires:  %{?scl_prefix}perl(base)
-BuildRequires:  %{?scl_prefix}perl(Config)
 # Config::Tiny not used
 BuildRequires:  %{?scl_prefix}perl(lib)
 # Module::Signature not used
@@ -62,6 +62,7 @@ This provides Perl modules for arbitrary-size integer and float mathematics.
 
 %prep
 %setup -q -n Math-BigInt-%{cpan_version}
+%{?scl:scl enable %{scl} '}perl -MConfig -i -pe %{?scl:'"}'%{?scl:"'}s{^#!/usr/bin/perl}{$Config{startperl}}%{?scl:'"}'%{?scl:"'} examples/*.pl%{?scl:'}
 
 %build
 %{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 NO_PERLLOCAL=1 && %{make_build}%{?scl:'}
@@ -82,6 +83,9 @@ unset AUTHOR_TESTING RELEASE_TESTING
 %{_mandir}/man3/*
 
 %changelog
+* Thu Mar 26 2020 Petr Pisar <ppisar@redhat.com> - 1:1.9998.18-3
+- Normalize the shebangs (bug #1817411)
+
 * Fri Dec 20 2019 Jitka Plesnikova <jplesnik@redhat.com> - 1:1.9998.18-2
 - SCL
 
